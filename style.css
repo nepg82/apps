@@ -1,89 +1,214 @@
-:root{
-    --bg:#1a1a1a;
-    --card:#2b2b2b;
-    --hover:#3a3a3a;
-    --text:#eeeeee;
-    --secondary:#bbbbbb;
-    --radius:16px;
+:root {
+    --bg: #c0c0c0;
+    --window: #d9d9d9;
+    --title: #e6e6e6;
+    --text: #000;
+    --secondary: #333;
+    --highlight: #000080;
 }
 
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:system-ui,sans-serif;
+body {
+    margin: 0;
+    padding: 20px;
+
+    background: var(--bg);
+    color: var(--text);
+
+    font-family: "Chicago", "Geneva", sans-serif;
+    -webkit-font-smoothing: none;
+    font-size: 18px;
+    line-height: 1.2;
 }
 
-header{
-    text-align:center;
-    padding:2rem 1rem;
+
+/* Main Finder-style window */
+
+header {
+    max-width: 1100px;
+    margin: 0 auto;
+
+    background: var(--window);
+    border: 2px solid #000;
+
+    box-shadow:
+        inset 2px 2px 0 #fff,
+        inset -2px -2px 0 #7f7f7f;
 }
 
-header h1{
-    margin:0;
-    font-size:2rem;
+header h1 {
+    margin: 0;
+    padding: 6px 10px;
+
+    font-size: 28px;
+    font-weight: normal;
+    text-align: center;
+    letter-spacing: 0.02em;
+
+    background: var(--title);
+
+    border-bottom: 4px solid #000;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-header p{
-    color:var(--secondary);
-    margin-top:.5rem;
+header h1::before,
+header h1::after {
+    content: "";
+
+    flex: 1;
+    height: 22px;
+
+    background-image: repeating-linear-gradient(
+        to bottom,
+        #000 0,
+        #000 2px,
+        transparent 2px,
+        transparent 5px
+    );
 }
 
-#appGrid{
-    max-width:1100px;
-    margin:auto;
-    padding:1rem;
+header p {
+    margin: 0;
+    padding: 8px;
 
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:1rem;
+    text-align: center;
+
+    color: var(--secondary);
+    background: #efefef;
+
+    border-bottom: 2px solid #000;
 }
 
-.appCard{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:1.5rem;
-    text-decoration:none;
-    color:inherit;
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+/* App area */
 
-    transition:.2s;
+#appGrid {
+    max-width: 1100px;
+    margin: 0 auto;
+
+    padding: 20px;
+
+    background: var(--window);
+
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
 }
 
-.appCard:hover{
-    background:var(--hover);
-    transform:translateY(-4px);
+
+/* Desktop-style icons */
+
+.appCard {
+    text-decoration: none;
+    color: var(--text);
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border: 2px solid transparent;
+
+    cursor: pointer;
 }
 
-.appCard img{
-    width:96px;
-    height:96px;
-    border-radius:22px;
-    margin-bottom:1rem;
+.appCard:hover {
+    background: rgba(0, 0, 128, 0.15);
 }
 
-.appCard h2{
-    margin:0;
-    text-align:center;
-    font-size:1.2rem;
+.appCard:active {
+    background: var(--highlight);
+    color: #fff;
 }
 
-.appCard p{
-    margin-top:.5rem;
-    text-align:center;
-    color:var(--secondary);
-    font-size:.9rem;
+
+.appCard img {
+    width: 72px;
+    height: 72px;
+
+    margin-bottom: 10px;
+
+    image-rendering: pixelated;
 }
 
-footer{
-    padding:2rem;
-    text-align:center;
-    color:#777;
+
+.appCard h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: normal;
+
+    text-align: center;
+}
+
+
+.appCard p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+
+    color: var(--secondary);
+
+    text-align: center;
+}
+
+.appCard:active p {
+    color: #fff;
+}
+
+
+/* Footer */
+
+footer {
+    max-width: 1100px;
+    margin: 0 auto;
+
+    padding: 12px;
+
+    background: var(--window);
+
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 8px;
+    }
+
+    header h1 {
+        font-size: 22px;
+    }
+
+    #appGrid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .appCard img {
+        width: 64px;
+        height: 64px;
+    }
+
 }
