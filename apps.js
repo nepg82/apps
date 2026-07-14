@@ -10,6 +10,10 @@ const apps = [
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
         description: "National Weather Service forecasts"
+    },
+    {
+        url: "https://nepg82.github.io/Just-The-Tip/",
+        description: "Basic tip calculator"
     }
 ];
 
