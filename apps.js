@@ -9,12 +9,16 @@ const apps = [
     },
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
-        description: "National Weather Service forecasts"
+        description: "NWS forecasts"
     },
     {
         url: "https://nepg82.github.io/Just-The-Tip/",
         description: "Basic tip calculator"
-    }
+    },
+    {
+        url: "https://nepg82.github.io/Putt-Pad/",
+        description: "Golf score card"
+   }
 ];
 
 const grid = document.getElementById("appGrid");
