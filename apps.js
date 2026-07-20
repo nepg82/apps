@@ -23,21 +23,12 @@ const apps = [
 
 const grid = document.getElementById("appGrid");
 
-apps.forEach(async app => {
+apps.forEach(app => {
 
-    let title = app.url;
-
-    try{
-        const response = await fetch(app.url + "manifest.json");
-        const manifest = await response.json();
-
-        title = manifest.name || manifest.short_name || title;
-    }
-    catch{
-        title = app.url
-            .replace("https://nepg82.github.io/","")
-            .replace("/","");
-    }
+    // Fallback title derived synchronously so the card can render immediately.
+    const fallbackTitle = app.url
+        .replace("https://nepg82.github.io/", "")
+        .replace("/", "");
 
     const card = document.createElement("a");
 
@@ -45,11 +36,26 @@ apps.forEach(async app => {
     card.href = app.url;
 
     card.innerHTML = `
-        <img src="${app.url}app-icons/app-icon-192.png" alt="${title}">
-        <h2>${title}</h2>
+        <img src="${app.url}app-icons/app-icon-192.png" alt="${fallbackTitle}">
+        <h2>${fallbackTitle}</h2>
         <p>${app.description}</p>
     `;
 
+    // Appended in array order right away, so grid position never shifts.
     grid.appendChild(card);
+
+    const titleEl = card.querySelector("h2");
+    const imgEl = card.querySelector("img");
+
+    fetch(app.url + "manifest.json")
+        .then(response => response.json())
+        .then(manifest => {
+            const title = manifest.name || manifest.short_name || fallbackTitle;
+            titleEl.textContent = title;
+            imgEl.alt = title;
+        })
+        .catch(() => {
+            // Fallback title already in place; nothing more to do.
+        });
 
 });
