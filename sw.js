@@ -7,7 +7,7 @@ const FILES = [
     "./apps.js",
     "./manifest.json",
     "./app-icons/app-icon-192.png",
-    "./app-icons/app-icon-512.png"
+    "./app-icons/app-icon-512.png",
     "./fonts/ChiKareGo2.ttf"
 ];
 
