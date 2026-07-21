@@ -18,6 +18,10 @@ const apps = [
     {
         url: "https://nepg82.github.io/Putt-Pad/",
         description: "Golf score card"
+   },
+   {
+        url: "https://nepg82.github.io/Magazine/",
+        description: "Ammunition tracker"
    }
 ];
 
