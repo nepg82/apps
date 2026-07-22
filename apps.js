@@ -22,6 +22,10 @@ const apps = [
    {
         url: "https://nepg82.github.io/Magazine/",
         description: "Ammunition tracker"
+   },
+   {
+        url: "https://nepg82.github.io/biker-church/",
+        description: "Biker church app"
    }
 ];
 
