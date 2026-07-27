@@ -4,6 +4,10 @@ const apps = [
         description: "Simple countdown timer"
     },
     {
+        url: "https://nepg82.github.io/StopWatch/",
+        description: "...it's just a simple thing"
+    },
+    {
         url: "https://nepg82.github.io/Thruway-Rest-Area-Helper/",
         description: "Find NYS Thruway rest areas"
     },
