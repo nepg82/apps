@@ -34,6 +34,10 @@ const apps = [
    {
         url: "https://nepg82.github.io/garagelog/",
         description: "GarageLog"
+   },
+   {
+        url: "https://nepg82.github.io/FitMac/",
+        description: "Fitness/Macros Tracker"
    }
 ];
 
