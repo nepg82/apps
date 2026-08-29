@@ -1,7 +1,31 @@
 const apps = [
     {
+        url: "https://nepg82.github.io/biker-church/",
+        description: "Biker church app"
+    },
+    {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
         description: "Simple countdown timer"
+    },
+    {
+        url: "https://nepg82.github.io/FitMac/",
+        description: "Fitness/Macros Tracker"
+    },
+    {
+        url: "https://nepg82.github.io/garagelog/",
+        description: "GarageLog"
+    },
+    {
+        url: "https://nepg82.github.io/Just-The-Tip/",
+        description: "Basic tip calculator"
+    },
+    {
+        url: "https://nepg82.github.io/Magazine/",
+        description: "Ammunition tracker"
+    },
+    {
+        url: "https://nepg82.github.io/Putt-Pad/",
+        description: "Golf score card"
     },
     {
         url: "https://nepg82.github.io/StopWatch/",
@@ -14,31 +38,7 @@ const apps = [
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
         description: "NWS forecasts"
-    },
-    {
-        url: "https://nepg82.github.io/Just-The-Tip/",
-        description: "Basic tip calculator"
-    },
-    {
-        url: "https://nepg82.github.io/Putt-Pad/",
-        description: "Golf score card"
-   },
-   {
-        url: "https://nepg82.github.io/Magazine/",
-        description: "Ammunition tracker"
-   },
-   {
-        url: "https://nepg82.github.io/biker-church/",
-        description: "Biker church app"
-   },
-   {
-        url: "https://nepg82.github.io/garagelog/",
-        description: "GarageLog"
-   },
-   {
-        url: "https://nepg82.github.io/FitMac/",
-        description: "Fitness/Macros Tracker"
-   }
+    }
 ];
 
 const grid = document.getElementById("appGrid");
