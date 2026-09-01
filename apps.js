@@ -83,3 +83,22 @@ apps.forEach(app => {
         });
 
 });
+
+document.getElementById("refreshTrigger").addEventListener("click", async () => {
+    // 1. Unregister active service workers
+    if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+            await registration.unregister();
+        }
+    }
+
+    // 2. Delete all cached assets
+    if ("caches" in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+    }
+
+    // 3. Force reload page directly from the server
+    window.location.reload(true);
+});
