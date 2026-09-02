@@ -1,47 +1,47 @@
 const apps = [
     {
         url: "https://nepg82.github.io/biker-church/",
-        description: "Biker church app"
+        // description: "Biker church app"
     },
     {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
-        description: "Simple countdown timer"
+        // description: "Simple countdown timer"
     },
     {
         url: "https://nepg82.github.io/FitMac/",
-        description: "Fitness/Macros Tracker"
+        // description: "Fitness/Macros Tracker"
     },
     {
         url: "https://nepg82.github.io/FutureHaven/",
-        description: "Retirement calculator"
+        // description: "Retirement calculator"
     },
     {
         url: "https://nepg82.github.io/garagelog/",
-        description: "GarageLog"
+        // description: "GarageLog"
     },
     {
         url: "https://nepg82.github.io/Just-The-Tip/",
-        description: "Basic tip calculator"
+        // description: "Basic tip calculator"
     },
     {
         url: "https://nepg82.github.io/Magazine/",
-        description: "Ammunition tracker"
+        // description: "Ammunition tracker"
     },
     {
         url: "https://nepg82.github.io/Putt-Pad/",
-        description: "Golf score card"
+        // description: "Golf score card"
     },
     {
         url: "https://nepg82.github.io/StopWatch/",
-        description: "...it's just a simple thing"
+        // description: "...it's just a simple thing"
     },
     {
         url: "https://nepg82.github.io/Thruway-Rest-Area-Helper/",
-        description: "Find NYS Thruway rest areas"
+        // description: "Find NYS Thruway rest areas"
     },
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
-        description: "NWS forecasts"
+        // description: "NWS forecasts"
     }
 ];
 
