@@ -62,10 +62,9 @@ apps.forEach(app => {
     card.innerHTML = `
         <img src="${app.url}app-icons/app-icon-192.png" alt="${fallbackTitle}">
         <h2>${fallbackTitle}</h2>
+        <p>${app.description}</p>
     `;
-    // <p>${app.description}</p>
 
-    
     // Appended in array order right away, so grid position never shifts.
     grid.appendChild(card);
 
