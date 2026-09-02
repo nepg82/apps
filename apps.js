@@ -12,12 +12,12 @@ const apps = [
         description: "Fitness/Macros Tracker"
     },
     {
-        url: "https://nepg82.github.io/garagelog/",
-        description: "GarageLog"
+        url: "https://nepg82.github.io/FutureHaven/",
+        description: "Retirement calculator"
     },
     {
-        url: "https://nepg82.github.io/harbor/",
-        description: "Retirement calculator"
+        url: "https://nepg82.github.io/garagelog/",
+        description: "GarageLog"
     },
     {
         url: "https://nepg82.github.io/Just-The-Tip/",
