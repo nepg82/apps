@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Metasyntactic Variable</title>
 <style>
   html, body {
@@ -110,6 +110,19 @@ function draw(now) {
 window.addEventListener("resize", resize);
 resize();
 requestAnimationFrame(draw);
+
+document.addEventListener("click", enterFullscreen);
+document.addEventListener("touchend", enterFullscreen);
+
+async function enterFullscreen() {
+    if (document.fullscreenElement) return;
+
+    try {
+        await document.documentElement.requestFullscreen();
+    } catch (err) {
+        console.log("Fullscreen unavailable:", err);
+    }
+}
 </script>
 </body>
 </html>

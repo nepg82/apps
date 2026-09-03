@@ -84,21 +84,43 @@ apps.forEach(app => {
 
 });
 
-document.getElementById("refreshTrigger").addEventListener("click", async () => {
-    // 1. Unregister active service workers
+const refreshTrigger = document.getElementById("refreshTrigger");
+
+let copyrightTaps = 0;
+let copyrightTapTimer = null;
+
+refreshTrigger.addEventListener("click", () => {
+    copyrightTaps++;
+
+    clearTimeout(copyrightTapTimer);
+
+    copyrightTapTimer = setTimeout(() => {
+        if (copyrightTaps === 1) {
+            forceRefresh();
+        }
+
+        copyrightTaps = 0;
+    }, 500);
+
+    if (copyrightTaps === 3) {
+        copyrightTaps = 0;
+        window.location.href = "MV.html";
+    }
+});
+
+async function forceRefresh() {
     if ("serviceWorker" in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
+
         for (const registration of registrations) {
             await registration.unregister();
         }
     }
 
-    // 2. Delete all cached assets
     if ("caches" in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map(name => caches.delete(name)));
     }
 
-    // 3. Force reload page directly from the server
     window.location.reload(true);
-});
+}
