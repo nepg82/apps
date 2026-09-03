@@ -111,7 +111,7 @@ function resize() {
   rows = Math.ceil(innerHeight / cellH) + 1;
 }
 
-function wave(x, y, t, now) {
+function wave(x, y, t, rippleData) {
   let a =
       Math.sin(x * 0.075 + t * 1.25) +
       Math.sin(y * 0.095 - t * 0.90) +
@@ -121,12 +121,12 @@ function wave(x, y, t, now) {
   a /= 4;
 
   // Add disturbances created by taps.
-  for (const ripple of ripples) {
-    const age = (now - ripple.born) / 1000;
-    const distance = Math.hypot(x - ripple.x, y - ripple.y);
+  for (const data of rippleData) {
+    const age = data.age;
+	const distance = Math.hypot(x - data.ripple.x, y - data.ripple.y);
 
     // Ripple expands outward.
-    const radius = age * 500;
+    const radius = data.radius;
 
     // Thin ring around the expanding wave.
     const ring = Math.exp(
@@ -144,6 +144,12 @@ function wave(x, y, t, now) {
 
 function draw(now) {
   const t = (now - startTime) / 1000;
+  
+  const rippleData = ripples.map(ripple => ({
+    ripple,
+    age: (now - ripple.born) / 1000,
+    radius: ((now - ripple.born) / 1000) * 500
+  }));
 
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, innerWidth, innerHeight);
@@ -156,7 +162,7 @@ function draw(now) {
     for (let col = 0; col < cols; col++) {
       const x = col * cellW;
 
-      let v = wave(x, y, t, now);
+      let v = wave(x, y, t, rippleData);
 
       // Add a slow secondary distortion.
       v += 0.18 * Math.sin(x * 0.018 - y * 0.031 + t * 0.55);
@@ -173,9 +179,12 @@ function draw(now) {
 	  let light = 42 + Math.abs(v) * 24;
 
 	  // Make recently-tapped areas glow.
-	  for (const ripple of ripples) {
-	    const age = (now - ripple.born) / 1000;
-	    const distance = Math.hypot(x - ripple.x, y - ripple.y);
+	  for (const data of rippleData) {
+	    const age = data.age;
+	    const distance = Math.hypot(
+	      x - data.ripple.x,
+	      y - data.ripple.y
+	    );
 
 	    const hotspot =
 	      Math.exp(-Math.pow(distance / 180, 2)) *
