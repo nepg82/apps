@@ -56,18 +56,42 @@ function addRipple(x, y) {
   }
 }
 
-function pointerPosition(e) {
-  const rect = canvas.getBoundingClientRect();
+let longPressTimer = null;
+let longPressTriggered = false;
 
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
-  };
-}
+canvas.addEventListener("pointerdown", (event) => {
+  longPressTriggered = false;
 
-canvas.addEventListener("pointerdown", (e) => {
-  const p = pointerPosition(e);
-  addRipple(p.x, p.y);
+  // Capture the pointer so we continue receiving pointerup/cancel.
+  canvas.setPointerCapture(event.pointerId);
+
+  longPressTimer = setTimeout(async () => {
+    longPressTriggered = true;
+
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (err) {
+        console.log("Fullscreen unavailable:", err);
+      }
+    }
+  }, 700);
+});
+
+canvas.addEventListener("pointerup", (event) => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+
+  // A normal tap creates a ripple.
+  if (!longPressTriggered) {
+    addRipple(event.clientX, event.clientY);
+  }
+});
+
+canvas.addEventListener("pointercancel", () => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+  longPressTriggered = false;
 });
 
 function resize() {
@@ -87,7 +111,7 @@ function resize() {
   rows = Math.ceil(innerHeight / cellH) + 1;
 }
 
-function wave(x, y, t) {
+function wave(x, y, t, now) {
   let a =
       Math.sin(x * 0.075 + t * 1.25) +
       Math.sin(y * 0.095 - t * 0.90) +
@@ -97,8 +121,6 @@ function wave(x, y, t) {
   a /= 4;
 
   // Add disturbances created by taps.
-  const now = performance.now();
-
   for (const ripple of ripples) {
     const age = (now - ripple.born) / 1000;
     const distance = Math.hypot(x - ripple.x, y - ripple.y);
@@ -134,7 +156,7 @@ function draw(now) {
     for (let col = 0; col < cols; col++) {
       const x = col * cellW;
 
-      let v = wave(x, y, t);
+      let v = wave(x, y, t, now);
 
       // Add a slow secondary distortion.
       v += 0.18 * Math.sin(x * 0.018 - y * 0.031 + t * 0.55);
@@ -151,8 +173,6 @@ function draw(now) {
 	  let light = 42 + Math.abs(v) * 24;
 
 	  // Make recently-tapped areas glow.
-	  const now = performance.now();
-
 	  for (const ripple of ripples) {
 	    const age = (now - ripple.born) / 1000;
 	    const distance = Math.hypot(x - ripple.x, y - ripple.y);
@@ -175,20 +195,8 @@ function draw(now) {
 
 window.addEventListener("resize", resize);
 resize();
-requestAnimationFrame(draw);
+setTimeout(() => requestAnimationFrame(draw), 1000 / 30);
 
-document.addEventListener("click", enterFullscreen);
-document.addEventListener("touchend", enterFullscreen);
-
-async function enterFullscreen() {
-    if (document.fullscreenElement) return;
-
-    try {
-        await document.documentElement.requestFullscreen();
-    } catch (err) {
-        console.log("Fullscreen unavailable:", err);
-    }
-}
 </script>
 </body>
 </html>
