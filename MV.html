@@ -40,6 +40,36 @@ let cols, rows;
 let cellW, cellH;
 let startTime = performance.now();
 
+const ripples = [];
+
+function addRipple(x, y) {
+  ripples.push({
+    x,
+    y,
+    born: performance.now(),
+    strength: 1
+  });
+
+  // Don't let hundreds of taps accumulate forever.
+  if (ripples.length > 12) {
+    ripples.shift();
+  }
+}
+
+function pointerPosition(e) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  const p = pointerPosition(e);
+  addRipple(p.x, p.y);
+});
+
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = innerWidth * dpr;
@@ -58,15 +88,36 @@ function resize() {
 }
 
 function wave(x, y, t) {
-  // Several interacting waves. Their interference creates the
-  // coherent, shifting patterns rather than random noise.
-  const a =
+  let a =
       Math.sin(x * 0.075 + t * 1.25) +
       Math.sin(y * 0.095 - t * 0.90) +
       Math.sin((x + y) * 0.045 + t * 0.70) +
       Math.sin(Math.hypot(x - 700, y - 420) * 0.055 - t * 1.15);
 
-  return a / 4;
+  a /= 4;
+
+  // Add disturbances created by taps.
+  const now = performance.now();
+
+  for (const ripple of ripples) {
+    const age = (now - ripple.born) / 1000;
+    const distance = Math.hypot(x - ripple.x, y - ripple.y);
+
+    // Ripple expands outward.
+    const radius = age * 500;
+
+    // Thin ring around the expanding wave.
+    const ring = Math.exp(
+      -Math.pow((distance - radius) / 45, 2)
+    );
+
+    // Ripple gradually fades.
+    const fade = Math.exp(-age * 1.8);
+
+    a += ring * fade * 0.9;
+  }
+
+  return Math.max(-1, Math.min(1, a));
 }
 
 function draw(now) {
@@ -96,10 +147,25 @@ function draw(now) {
       if (ch === " ") continue;
 
       // Color follows the wave phase.
-      const hue = (190 + v * 110 + t * 22) % 360;
-      const light = 42 + Math.abs(v) * 24;
+      let hue = (190 + v * 110 + t * 22) % 360;
+	  let light = 42 + Math.abs(v) * 24;
 
-      ctx.fillStyle = `hsl(${hue}, 90%, ${light}%)`;
+	  // Make recently-tapped areas glow.
+	  const now = performance.now();
+
+	  for (const ripple of ripples) {
+	    const age = (now - ripple.born) / 1000;
+	    const distance = Math.hypot(x - ripple.x, y - ripple.y);
+
+	    const hotspot =
+	      Math.exp(-Math.pow(distance / 180, 2)) *
+	      Math.exp(-age * 1.5);
+
+	    light += hotspot * 35;
+	    hue += hotspot * 80;
+	  }
+
+	  ctx.fillStyle = `hsl(${hue % 360}, 90%, ${Math.min(light, 90)}%)`;
       ctx.fillText(ch, x, y);
     }
   }
