@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Metasyntactic Variable</title>
+<style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+  }
+</style>
+</head>
+<body>
+<canvas id="screen"></canvas>
+
+<script>
+"use strict";
+
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+
+const chars = " .,:;irsXA253hMHGS#9B&@";
+const fontSize = 15;
+let cols, rows;
+let cellW, cellH;
+let startTime = performance.now();
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  canvas.style.width = innerWidth + "px";
+  canvas.style.height = innerHeight + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = `${fontSize}px "Courier New", monospace`;
+  ctx.textBaseline = "top";
+
+  cellW = fontSize * 0.62;
+  cellH = fontSize * 1.05;
+  cols = Math.ceil(innerWidth / cellW) + 1;
+  rows = Math.ceil(innerHeight / cellH) + 1;
+}
+
+function wave(x, y, t) {
+  // Several interacting waves. Their interference creates the
+  // coherent, shifting patterns rather than random noise.
+  const a =
+      Math.sin(x * 0.075 + t * 1.25) +
+      Math.sin(y * 0.095 - t * 0.90) +
+      Math.sin((x + y) * 0.045 + t * 0.70) +
+      Math.sin(Math.hypot(x - 700, y - 420) * 0.055 - t * 1.15);
+
+  return a / 4;
+}
+
+function draw(now) {
+  const t = (now - startTime) / 1000;
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, innerWidth, innerHeight);
+
+  ctx.font = `${fontSize}px "Courier New", monospace`;
+
+  for (let row = 0; row < rows; row++) {
+    const y = row * cellH;
+
+    for (let col = 0; col < cols; col++) {
+      const x = col * cellW;
+
+      let v = wave(x, y, t);
+
+      // Add a slow secondary distortion.
+      v += 0.18 * Math.sin(x * 0.018 - y * 0.031 + t * 0.55);
+      v = Math.max(-1, Math.min(1, v));
+
+      // Convert wave intensity into a character.
+      const index = Math.floor((v + 1) * 0.5 * (chars.length - 1));
+      const ch = chars[index];
+
+      if (ch === " ") continue;
+
+      // Color follows the wave phase.
+      const hue = (190 + v * 110 + t * 22) % 360;
+      const light = 42 + Math.abs(v) * 24;
+
+      ctx.fillStyle = `hsl(${hue}, 90%, ${light}%)`;
+      ctx.fillText(ch, x, y);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
