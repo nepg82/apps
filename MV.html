@@ -22,6 +22,7 @@
     width: 100vw;
     height: 100vh;
     background: #000;
+    touch-action: none;
   }
 </style>
 </head>
@@ -70,6 +71,7 @@ let longPressTimer = null;
 let longPressTriggered = false;
 
 canvas.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
   longPressTriggered = false;
   swipeTracking = true;
   swipeStartX = event.clientX;
