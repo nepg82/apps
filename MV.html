@@ -40,6 +40,16 @@ let cols, rows;
 let cellW, cellH;
 let startTime = performance.now();
 
+// Wave direction: 1 or -1 for each axis.
+// Default is right-to-left.
+let directionX = -1;
+let directionY = 0;
+
+// Swipe tracking.
+let swipeStartX = 0;
+let swipeStartY = 0;
+let swipeTracking = false;
+
 const ripples = [];
 
 function addRipple(x, y) {
@@ -61,11 +71,17 @@ let longPressTriggered = false;
 
 canvas.addEventListener("pointerdown", (event) => {
   longPressTriggered = false;
+  swipeTracking = true;
+  swipeStartX = event.clientX;
+  swipeStartY = event.clientY;
 
   // Capture the pointer so we continue receiving pointerup/cancel.
   canvas.setPointerCapture(event.pointerId);
 
   longPressTimer = setTimeout(async () => {
+    // Only treat it as a long press if the finger hasn't moved.
+    if (!swipeTracking) return;
+
     longPressTriggered = true;
 
     if (!document.fullscreenElement) {
@@ -78,20 +94,46 @@ canvas.addEventListener("pointerdown", (event) => {
   }, 700);
 });
 
+canvas.addEventListener("pointermove", (event) => {
+  if (!swipeTracking) return;
+
+  const dx = event.clientX - swipeStartX;
+  const dy = event.clientY - swipeStartY;
+
+  // 40px threshold keeps ordinary taps from becoming swipes.
+  if (Math.hypot(dx, dy) < 40) return;
+
+  swipeTracking = false;
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+
+  // Whichever axis has the larger movement determines the direction.
+  if (Math.abs(dx) > Math.abs(dy)) {
+    directionX = Math.sign(dx);
+    directionY = 0;
+  } else {
+    directionX = 0;
+    directionY = Math.sign(dy);
+  }
+});
+
 canvas.addEventListener("pointerup", (event) => {
   clearTimeout(longPressTimer);
   longPressTimer = null;
 
-  // A normal tap creates a ripple.
-  if (!longPressTriggered) {
+  // A normal tap creates a ripple. A swipe does not.
+  if (swipeTracking && !longPressTriggered) {
     addRipple(event.clientX, event.clientY);
   }
+
+  swipeTracking = false;
 });
 
 canvas.addEventListener("pointercancel", () => {
   clearTimeout(longPressTimer);
   longPressTimer = null;
   longPressTriggered = false;
+  swipeTracking = false;
 });
 
 function resize() {
@@ -165,7 +207,10 @@ function draw(now) {
       let v = wave(x, y, t, rippleData);
 
       // Add a slow secondary distortion.
-      v += 0.18 * Math.sin(x * 0.018 - y * 0.031 + t * 0.55);
+      v += 0.18 * Math.sin(
+        x * 0.018 - y * 0.031 +
+        (directionX * 0.7 + directionY * 0.7) * t * 0.55
+      );
       v = Math.max(-1, Math.min(1, v));
 
       // Convert wave intensity into a character.
