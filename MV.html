@@ -40,8 +40,8 @@ let cols, rows;
 let cellW, cellH;
 let startTime = performance.now();
 
-// Wave direction: 1 or -1 for each axis.
-// Default is right-to-left.
+// Wave velocity: +1 = left-to-right / top-to-bottom.
+// -1 = right-to-left / bottom-to-top.
 let directionX = -1;
 let directionY = 0;
 
@@ -155,9 +155,12 @@ function resize() {
 
 function wave(x, y, t, rippleData) {
   let a =
-      Math.sin(x * 0.075 + t * 1.25) +
-      Math.sin(y * 0.095 - t * 0.90) +
-      Math.sin((x + y) * 0.045 + t * 0.70) +
+      Math.sin(x * 0.075 - directionX * t * 1.25) +
+      Math.sin(y * 0.095 - directionY * t * 0.90) +
+      Math.sin(
+        (x * (directionX || 1) + y * (directionY || 1)) * 0.045 +
+        t * 0.70
+      ) +
       Math.sin(Math.hypot(x - 700, y - 420) * 0.055 - t * 1.15);
 
   a /= 4;
