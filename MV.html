@@ -35,7 +35,7 @@
 const canvas = document.getElementById("screen");
 const ctx = canvas.getContext("2d");
 
-const chars = "       .,:;irsXA253hMHGS#9B&@";
+const chars = "           .,:;irsXA253hMHGS#9B&@";
 const fontSize = 15;
 let cols, rows;
 let cellW, cellH;
@@ -149,8 +149,8 @@ function resize() {
   ctx.font = `${fontSize}px "Courier New", monospace`;
   ctx.textBaseline = "top";
 
-  cellW = fontSize * 0.80;
-  cellH = fontSize * 1.35;
+  cellW = fontSize * 0.62;
+  cellH = fontSize * 1.05;
   cols = Math.ceil(innerWidth / cellW) + 1;
   rows = Math.ceil(innerHeight / cellH) + 1;
 }
