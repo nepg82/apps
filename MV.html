@@ -186,6 +186,8 @@ function wave(x, y, t, rippleData) {
     a += ring * fade * 0.9;
   }
 
+  a = Math.sign(a) * Math.pow(Math.abs(a), 0.6);
+
   return Math.max(-1, Math.min(1, a));
 }
 
