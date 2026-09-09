@@ -108,7 +108,7 @@ refreshTrigger.addEventListener("click", () => {
 
     if (copyrightTaps === 3) {
         copyrightTaps = 0;
-        window.location.href = "MV.html";
+        window.location.href = "matrix.html";
     }
 });
 

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matrix Rain</title>
+<style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    touch-action: none;
+  }
+</style>
+</head>
+<body>
+<canvas id="screen"></canvas>
+
+<script>
+"use strict";
+
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+
+// Half-width katakana + digits + a handful of symbols, in the spirit of the film.
+const glyphSource =
+  "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン" +
+  "0123456789" +
+  ":・.\"=*+-<>¦";
+
+const fontSize = window.innerWidth < 600 ? 16 : 18;
+const COL_SPACING = fontSize * 0.78;   // tighter than fontSize -> denser field
+const TRAIL_CHAR_COUNT = 28;           // fixed visible characters per stream (25-30)
+const CYCLE_RATE = 0.55;               // avg glyph re-rolls per second per lit cell
+
+let cols, rows;
+let glyphGrid = [];       // glyphGrid[col][row] -> character occupying that FIXED cell
+let headRow = [];         // current (integer) head row per column - the grid position doesn't move, only which row is "lit" advances
+let rowAccum = [];        // fractional accumulator driving stepped row advance
+let baseRowsPerSec = [];  // baseline stepping speed per column, in rows/sec
+
+// Ripples: expanding rings that travel outward from a tap point, radially,
+// same shape as the wave disturbance in MV.html.
+const ripples = [];
+const RING_SPEED = 480;      // px/sec the ring expands
+const RING_WIDTH = 75;       // thickness of the glowing ring band
+const RIPPLE_LIFE = 2.4;     // seconds before a ripple is discarded
+const RING_DECAY = 0.75;     // slower decay = ripple stays visible longer
+
+function randomGlyph() {
+  return glyphSource[(Math.random() * glyphSource.length) | 0];
+}
+
+function addRipple(x, y0) {
+  ripples.push({ x, y: y0, born: performance.now() });
+  if (ripples.length > 6) ripples.shift();
+}
+
+function ringInfluence(x, y, now) {
+  let total = 0;
+  for (const r of ripples) {
+    const age = (now - r.born) / 1000;
+    if (age < 0 || age > RIPPLE_LIFE) continue;
+
+    const radius = age * RING_SPEED;
+    const dist = Math.hypot(x - r.x, y - r.y);
+    const ring = Math.exp(-Math.pow((dist - radius) / RING_WIDTH, 2));
+    const fade = Math.exp(-age * RING_DECAY);
+
+    total += ring * fade;
+  }
+  return total;
+}
+
+function newBaseSpeed() {
+  // Same feel as before (px/sec), converted to rows/sec for the fixed grid.
+  const pxPerSec = (90 + Math.random() * 160) * 0.75;
+  return pxPerSec / fontSize;
+}
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  canvas.style.width = innerWidth + "px";
+  canvas.style.height = innerHeight + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.textBaseline = "top";
+  ctx.font = `${fontSize}px "Courier New", monospace`;
+
+  cols = Math.ceil(innerWidth / COL_SPACING) + 2;
+  rows = Math.ceil(innerHeight / fontSize) + 2;
+
+  glyphGrid = new Array(cols).fill(0).map(() =>
+    new Array(rows).fill(0).map(() => randomGlyph())
+  );
+  headRow = new Array(cols).fill(0).map(() => -Math.random() * rows * 0.6);
+  rowAccum = new Array(cols).fill(0);
+  baseRowsPerSec = new Array(cols).fill(0).map(() => newBaseSpeed());
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, innerWidth, innerHeight);
+}
+
+// ---- Pointer handling ----
+// Tap => radial disruption. Long-press => fullscreen. No swipe/direction change.
+
+let pressStartX = 0;
+let pressStartY = 0;
+let pressActive = false;
+let pressMoved = false;
+let longPressTimer = null;
+let longPressTriggered = false;
+
+canvas.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  pressActive = true;
+  pressMoved = false;
+  longPressTriggered = false;
+  pressStartX = event.clientX;
+  pressStartY = event.clientY;
+
+  canvas.setPointerCapture(event.pointerId);
+
+  longPressTimer = setTimeout(async () => {
+    if (!pressActive || pressMoved) return;
+
+    longPressTriggered = true;
+
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (err) {
+        console.log("Fullscreen unavailable:", err);
+      }
+    }
+  }, 700);
+});
+
+canvas.addEventListener("pointermove", (event) => {
+  if (!pressActive) return;
+  const dx = event.clientX - pressStartX;
+  const dy = event.clientY - pressStartY;
+  if (Math.hypot(dx, dy) > 20) {
+    pressMoved = true;
+  }
+});
+
+canvas.addEventListener("pointerup", (event) => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+
+  if (pressActive && !pressMoved && !longPressTriggered) {
+    addRipple(event.clientX, event.clientY);
+  }
+
+  pressActive = false;
+});
+
+canvas.addEventListener("pointercancel", () => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+  longPressTriggered = false;
+  pressActive = false;
+});
+
+// ---- Render loop ----
+
+let lastTime = performance.now();
+
+function draw(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  while (ripples.length && (now - ripples[0].born) / 1000 > RIPPLE_LIFE) {
+    ripples.shift();
+  }
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, innerWidth, innerHeight);
+
+  ctx.font = `${fontSize}px "Courier New", monospace`;
+
+  for (let i = 0; i < cols; i++) {
+    const x = i * COL_SPACING;
+    const headY = headRow[i] * fontSize;
+
+    // Ripple briefly speeds up which row is "lit" as it passes this column.
+    const headInfluence = ripples.length ? ringInfluence(x, headY, now) : 0;
+    const effectiveRowsPerSec = baseRowsPerSec[i] * (1 + headInfluence * 4.5);
+
+    rowAccum[i] += effectiveRowsPerSec * dt;
+    while (rowAccum[i] >= 1) {
+      headRow[i] += 1;
+      rowAccum[i] -= 1;
+      // Grid position doesn't move - only WHICH row counts as "head" changes,
+      // like the next bulb lighting up on a marquee sign.
+    }
+
+    if (headRow[i] - TRAIL_CHAR_COUNT > rows) {
+      headRow[i] = -Math.random() * rows * 0.6;
+      baseRowsPerSec[i] = newBaseSpeed();
+    }
+
+    const colGlyphs = glyphGrid[i];
+    const headRowInt = Math.floor(headRow[i]);
+
+    for (let k = 0; k < TRAIL_CHAR_COUNT; k++) {
+      const rowIdx = headRowInt - k;
+      if (rowIdx < 0 || rowIdx >= rows) continue;
+
+      const charY = rowIdx * fontSize;
+
+      // Slow, occasional re-roll of this cell's glyph while it's lit.
+      if (Math.random() < dt * CYCLE_RATE) {
+        colGlyphs[rowIdx] = randomGlyph();
+      }
+
+      const progress = k / TRAIL_CHAR_COUNT; // 0 at head, 1 at tail
+      const fadeAlpha = Math.max(0, 1 - Math.pow(progress, 1.8));
+
+      const influence = k === 0 ? headInfluence
+        : (ripples.length ? ringInfluence(x, charY, now) : 0);
+
+      if (k === 0) {
+        // Only the leading (currently lit) character is pure white.
+        ctx.fillStyle = "#ffffff";
+      } else {
+        const light = 30 + fadeAlpha * 42 + influence * 55;
+        const hue = 130 + influence * 40;
+        const alpha = Math.min(1, Math.max(fadeAlpha * 0.95, influence * 1.1));
+        ctx.fillStyle = `hsla(${hue}, 95%, ${Math.min(light, 92)}%, ${alpha})`;
+      }
+
+      ctx.fillText(colGlyphs[rowIdx], x, charY);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
