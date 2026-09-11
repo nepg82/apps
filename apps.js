@@ -8,6 +8,10 @@ const apps = [
         // description: "Simple countdown timer"
     },
     {
+        url: "https://nepg82.github.io/clock/",
+        // description: "basic digital clock"
+    },
+    {
         url: "https://nepg82.github.io/FitMac/",
         // description: "Fitness/Macros Tracker"
     },
