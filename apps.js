@@ -40,6 +40,10 @@ const apps = [
         // description: "Movie Database"
     },
     {
+        url: "https://nepg82.github.io/OWPOC/",
+        // description: "Open World Proof of Concept"
+    },
+    {
         url: "https://nepg82.github.io/Putt-Pad/",
         // description: "Golf score card"
     },
