@@ -3,6 +3,10 @@ const apps = [
         url: "https://nepg82.github.io/biker-church/",
         // description: "Biker church app"
     },
+	{
+        url: "https://nepg82.github.io/chillforge/",
+        // description: "Generative lo-fi / chillhop beat maker"
+    },
     {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
         // description: "Simple countdown timer"
