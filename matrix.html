@@ -36,9 +36,11 @@ const canvas = document.getElementById("screen");
 const ctx = canvas.getContext("2d");
 
 // Half-width katakana + digits + a handful of symbols, in the spirit of the film.
-const glyphSource =
-  "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン" +
-  "0123456789" +
+// "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン" +
+//  "0123456789" +
+  const glyphSource =
+  "αβΓγΔδεζηθικΛλμνΞξοΠπρΣσςτυΦφχΨψΩω" +
+  "אבגדהוזחטיכךלמנסעפצקרשתםןףץ" +
   ":・.\"=*+-<>¦";
 
 const fontSize = window.innerWidth < 600 ? 16 : 18;
