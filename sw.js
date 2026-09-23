@@ -1,4 +1,4 @@
-const CACHE = "apps-launcher-v2.0.7";
+const CACHE = "apps-launcher-v2.0.8";
 
 const FILES = [
     "./",
@@ -8,7 +8,9 @@ const FILES = [
     "./manifest.json",
     "./app-icons/app-icon-192.png",
     "./app-icons/app-icon-512.png",
-    "./fonts/ChiKareGo2.ttf"
+    "./fonts/ChiKareGo2.ttf",
+    "./fonts/geneva-9-1.ttf",
+    "./matrix.html"
 ];
 
 self.addEventListener("install", event => {
