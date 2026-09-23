@@ -1,73 +1,90 @@
 const apps = [
+    // KEY REQUIRED
     {
         url: "https://nepg82.github.io/biker-church/",
-        // description: "Biker church app"
-    },
-	{
-        url: "https://nepg82.github.io/chillforge/",
-        // description: "Generative lo-fi / chillhop beat maker"
-    },
-    {
-        url: "https://nepg82.github.io/countdown-timer-HTML/",
-        // description: "Simple countdown timer"
-    },
-    {
-        url: "https://nepg82.github.io/clock/",
-        // description: "basic digital clock"
+        access: "key"
     },
     {
         url: "https://nepg82.github.io/FitMac/",
-        // description: "Fitness/Macros Tracker"
+        access: "key"
     },
     {
         url: "https://nepg82.github.io/FutureHaven/",
-        // description: "Retirement calculator"
+        access: "key"
     },
     {
         url: "https://nepg82.github.io/garagelog/",
-        // description: "GarageLog"
-    },
-    {
-        url: "https://nepg82.github.io/IronLog/",
-        // description: "Iron Butt logbook"
-    },
-    {
-        url: "https://nepg82.github.io/Just-The-Tip/",
-        // description: "Basic tip calculator"
+        access: "key"
     },
     {
         url: "https://nepg82.github.io/Magazine/",
-        // description: "Ammunition tracker"
+        access: "key"
     },
     {
         url: "https://nepg82.github.io/OurMovies/",
-        // description: "Movie Database"
+        access: "key"
+    },
+
+    // PUBLIC ACCESS
+    {
+        url: "https://nepg82.github.io/chillforge/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/countdown-timer-HTML/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/clock/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/IronLog/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/Just-The-Tip/",
+        access: "public"
     },
     {
         url: "https://nepg82.github.io/OWPOC/",
-        // description: "Open World Proof of Concept"
+        access: "public"
     },
     {
         url: "https://nepg82.github.io/Putt-Pad/",
-        // description: "Golf score card"
+        access: "public"
     },
     {
         url: "https://nepg82.github.io/StopWatch/",
-        // description: "...it's just a simple thing"
+        access: "public"
     },
     {
         url: "https://nepg82.github.io/Thruway-Rest-Area-Helper/",
-        // description: "Find NYS Thruway rest areas"
+        access: "public"
     },
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
-        // description: "NWS forecasts"
+        access: "public"
     }
 ];
 
 const grid = document.getElementById("appGrid");
 
+let currentAccess = null;
+
 apps.forEach(app => {
+
+    if (app.access !== currentAccess) {
+        currentAccess = app.access;
+
+        const section = document.createElement("div");
+        section.className = "appSection";
+        section.innerHTML = `
+            <span>${app.access === "key" ? "Key Required" : "Public Access"}</span>
+        `;
+
+        grid.appendChild(section);
+    }
 
     // Fallback title derived synchronously so the card can render immediately.
     const fallbackTitle = app.url
@@ -104,6 +121,7 @@ apps.forEach(app => {
 
 });
 
+
 const refreshTrigger = document.getElementById("refreshTrigger");
 
 let copyrightTaps = 0;
@@ -127,6 +145,7 @@ refreshTrigger.addEventListener("click", () => {
         window.location.href = "matrix.html";
     }
 });
+
 
 async function forceRefresh() {
     if ("serviceWorker" in navigator) {

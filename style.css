@@ -5,6 +5,9 @@
     --text: #000;
     --secondary: #333;
     --highlight: #000080;
+
+    --gridPad: 20px;
+    --labelFont: "Geneva9", "Geneva", sans-serif;
 }
 
 * {
@@ -14,6 +17,13 @@
 @font-face {
     font-family: "ChiKareGo";
     src: url("fonts/ChiKareGo2.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Geneva9";
+    src: url("fonts/geneva-9-1.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
@@ -57,8 +67,6 @@ header h1 {
 
     background: var(--title);
 
-    // border-bottom: 4px solid #000;
-
     display: flex;
     align-items: center;
     gap: 20px;
@@ -99,7 +107,7 @@ header p {
     max-width: 1100px;
     margin: 0 auto;
 
-    padding: 20px;
+    padding: 0 var(--gridPad) 20px;
 
     background: var(--window);
 
@@ -109,9 +117,53 @@ header p {
 
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
+    gap: 14px;
 }
 
+
+/* App section labels */
+
+.appSection {
+    grid-column: 1 / -1;
+
+    margin: 0 calc(var(--gridPad) * -1);
+    padding: 0 var(--gridPad);
+
+    height: auto;
+    min-height: 24px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    
+    display: flex;
+    align-items: center;
+
+    background: #fff;
+    border-top: 1px solid #000;
+    border-bottom: 4px double #000;
+}
+
+.appSection span {
+    width: 100%;
+    margin: 0 10px;
+    padding: 1px 8px;
+
+    text-align: center;
+
+    font-family: var(--labelFont);
+    font-size: 22px;
+    line-height: 1;
+    white-space: nowrap;
+
+    background: #fff;
+}
+
+.appSection::before,
+.appSection::after {
+    content: "";
+    height: 2px;
+    background: #000;
+    flex: 1;
+}
 
 /* Desktop-style icons */
 
@@ -153,7 +205,8 @@ header p {
 .appCard h2 {
     margin: 0;
 
-    font-size: 18px;
+    font-family: var(--labelFont);
+    font-size: 24px;
     font-weight: normal;
 
     text-align: center;
@@ -163,6 +216,7 @@ header p {
 .appCard p {
     margin: 6px 0 0;
 
+    font-family: var(--labelFont);
     font-size: 14px;
 
     color: var(--secondary);
@@ -208,8 +262,10 @@ footer {
     }
 
     #appGrid {
+        --gridPad: 12px;
+
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-        padding: 12px;
+        padding: 0 var(--gridPad) var(--gridPad);
         gap: 10px;
     }
 
