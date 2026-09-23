@@ -148,18 +148,31 @@ refreshTrigger.addEventListener("click", () => {
 
 
 async function forceRefresh() {
+    // 1. Unregister all Service Workers
     if ("serviceWorker" in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
-
         for (const registration of registrations) {
             await registration.unregister();
         }
     }
 
+    // 2. Clear Cache Storage API
     if ("caches" in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map(name => caches.delete(name)));
     }
 
-    window.location.reload(true);
+    // 3. Force-fetch key assets from network to override HTTP disk cache
+    try {
+        await Promise.all([
+            fetch("index.html", { cache: "reload" }),
+            fetch("style.css", { cache: "reload" }),
+            fetch("apps.js", { cache: "reload" })
+        ]);
+    } catch (err) {
+        console.error("Failed to re-fetch assets:", err);
+    }
+
+    // 4. Redirect with a cache-busting timestamp parameter to force a clean load
+    window.location.href = window.location.pathname + "?reload=" + Date.now();
 }
