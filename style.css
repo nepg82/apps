@@ -254,7 +254,7 @@ footer {
 @media (max-width: 600px) {
 
     body {
-        padding: 8px;
+        padding: 4px;
     }
 
     header h1 {
@@ -262,16 +262,21 @@ footer {
     }
 
     #appGrid {
-        --gridPad: 12px;
+        --gridPad: 8px;
 
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
         padding: 0 var(--gridPad) var(--gridPad);
         gap: 10px;
     }
+    
+    .appCard {
+        padding: 6px;
+    }
 
     .appCard img {
         width: 64px;
         height: 64px;
+        margin-bottom: 4px;
     }
 
 }
