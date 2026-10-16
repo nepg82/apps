@@ -5,6 +5,10 @@ const apps = [
         access: "key"
     },
     {
+        url: "https://nepg82.github.io/dmnapto/",
+        access: "key"
+    },
+    {
         url: "https://nepg82.github.io/FitMac/",
         access: "key"
     },
@@ -24,7 +28,10 @@ const apps = [
         url: "https://nepg82.github.io/OurMovies/",
         access: "key"
     },
-
+    {
+        url: "https://nepg82.github.io/tfp/",
+        access: "key"
+    },
     // PUBLIC ACCESS
     {
         url: "https://nepg82.github.io/chillforge/",
