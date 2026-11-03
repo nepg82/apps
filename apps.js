@@ -70,6 +70,10 @@ const apps = [
         access: "public"
     },
     {
+        url: "https://nepg82.github.io/synthradio/",
+        access: "public"
+    },
+    {
         url: "https://nepg82.github.io/Thruway-Rest-Area-Helper/",
         access: "public"
     },
