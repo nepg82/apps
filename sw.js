@@ -1,4 +1,4 @@
-const CACHE = "apps-launcher-v2.0.12";
+const CACHE = "apps-launcher-v2.0.13";
 
 const FILES = [
     "./",

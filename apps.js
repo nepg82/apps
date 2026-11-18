@@ -38,6 +38,18 @@ const apps = [
         access: "public"
     },
     {
+        url: "https://nepg82.github.io/chillradio/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/pulseforge/",
+        access: "public"
+    },
+    {
+        url: "https://nepg82.github.io/synthradio/",
+        access: "public"
+    },
+    {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
         access: "public"
     },
@@ -67,10 +79,6 @@ const apps = [
     },
     {
         url: "https://nepg82.github.io/StopWatch/",
-        access: "public"
-    },
-    {
-        url: "https://nepg82.github.io/synthradio/",
         access: "public"
     },
     {
