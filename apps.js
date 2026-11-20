@@ -34,6 +34,10 @@ const apps = [
     },
     // PUBLIC ACCESS
     {
+        url: "https://nepg82.github.io/betty/",
+        access: "public"
+    },
+    {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
         access: "public"
     },
