@@ -5,10 +5,6 @@ const apps = [
         access: "key"
     },
     {
-        url: "https://nepg82.github.io/dmnapto/",
-        access: "key"
-    },
-    {
         url: "https://nepg82.github.io/FitMac/",
         access: "key"
     },
@@ -29,26 +25,14 @@ const apps = [
         access: "key"
     },
     {
+        url: "https://nepg82.github.io/dmnapto/",
+        access: "key"
+    },
+    {
         url: "https://nepg82.github.io/tfp/",
         access: "key"
     },
     // PUBLIC ACCESS
-    {
-        url: "https://nepg82.github.io/chillforge/",
-        access: "public"
-    },
-    {
-        url: "https://nepg82.github.io/chillradio/",
-        access: "public"
-    },
-    {
-        url: "https://nepg82.github.io/pulseforge/",
-        access: "public"
-    },
-    {
-        url: "https://nepg82.github.io/synthradio/",
-        access: "public"
-    },
     {
         url: "https://nepg82.github.io/countdown-timer-HTML/",
         access: "public"
@@ -88,6 +72,23 @@ const apps = [
     {
         url: "https://nepg82.github.io/Weather-or-Not-HTML/",
         access: "public"
+    },
+    /// MUSIC GENERATORS
+    {
+        url: "https://nepg82.github.io/chillforge/",
+        access: "music"
+    },
+    {
+        url: "https://nepg82.github.io/chillradio/",
+        access: "music"
+    },
+    {
+        url: "https://nepg82.github.io/pulseforge/",
+        access: "music"
+    },
+    {
+        url: "https://nepg82.github.io/synthradio/",
+        access: "music"
     }
 ];
 
@@ -98,16 +99,22 @@ let currentAccess = null;
 apps.forEach(app => {
 
     if (app.access !== currentAccess) {
-        currentAccess = app.access;
+	    currentAccess = app.access;
 
-        const section = document.createElement("div");
-        section.className = "appSection";
-        section.innerHTML = `
-            <span>${app.access === "key" ? "Key Required" : "Public Access"}</span>
-        `;
+	    const sectionNames = {
+	        key: "Key Required",
+	        public: "Public Access",
+	        music: "Music Generators"
+	    };
 
-        grid.appendChild(section);
-    }
+	    const section = document.createElement("div");
+	    section.className = "appSection";
+	    section.innerHTML = `
+	        <span>${sectionNames[app.access]}</span>
+	    `;
+	
+	    grid.appendChild(section);
+	}
 
     // Fallback title derived synchronously so the card can render immediately.
     const fallbackTitle = app.url
