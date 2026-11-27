@@ -2,12 +2,12 @@ const apps = [
     // KEY REQUIRED
     {
         url: "https://nepg82.github.io/biker-church/",
-        access: "key"
+        access: "key",
         alt: { label: "Open Admin", url: "https://nepg82.github.io/biker-church/admin.html" }
     },
     {
         url: "https://nepg82.github.io/FitMac/",
-        access: "key"
+        access: "key",
         alt: { label: "Open Tablet/Gym Mode", url: "https://nepg82.github.io/FitMac/tablet" }
     },
     {
@@ -86,7 +86,7 @@ const apps = [
     },
     {
         url: "https://nepg82.github.io/chillradio/",
-        access: "music"
+        access: "music",
         alt: { label: "Open Deck", url: "https://nepg82.github.io/chillradio/deck" }
     },
     {
