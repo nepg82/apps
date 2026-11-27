@@ -3,10 +3,12 @@ const apps = [
     {
         url: "https://nepg82.github.io/biker-church/",
         access: "key"
+        alt: { label: "Open Admin", url: "https://nepg82.github.io/biker-church/admin.html" }
     },
     {
         url: "https://nepg82.github.io/FitMac/",
         access: "key"
+        alt: { label: "Open Tablet/Gym Mode", url: "https://nepg82.github.io/FitMac/tablet" }
     },
     {
         url: "https://nepg82.github.io/FutureHaven/",
@@ -85,6 +87,7 @@ const apps = [
     {
         url: "https://nepg82.github.io/chillradio/",
         access: "music"
+        alt: { label: "Open Deck", url: "https://nepg82.github.io/chillradio/deck" }
     },
     {
         url: "https://nepg82.github.io/pulseforge/",
@@ -139,6 +142,9 @@ apps.forEach(app => {
     // Appended in array order right away, so grid position never shifts.
     grid.appendChild(card);
 
+    // Optional long-press menu (only if the app defines `alt`)
+    if (app.alt) attachLongPress(card, app);
+
     const titleEl = card.querySelector("h2");
     const imgEl = card.querySelector("img");
 
@@ -154,6 +160,118 @@ apps.forEach(app => {
         });
 
 });
+
+
+// ---------- Long-press menu ----------
+// To add one to an app, give it an `alt` property:
+//   { url: "...", access: "public", alt: { label: "Open Settings", url: "https://..." } }
+// Or several options:
+//   alt: [ { label: "Admin", url: "..." }, { label: "Docs", url: "..." } ]
+
+const LONG_PRESS_MS = 500;
+const MOVE_TOLERANCE = 10; // px of finger movement before the press is cancelled
+
+const menuStyle = document.createElement("style");
+menuStyle.textContent = `
+    .appCard.hasAlt { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+    .lpBackdrop {
+        position: fixed; inset: 0; z-index: 1000;
+        background: rgba(0,0,0,0.5);
+        display: flex; align-items: flex-end; justify-content: center;
+        padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+    .lpSheet {
+        width: 100%; max-width: 420px;
+        display: flex; flex-direction: column; gap: 8px;
+    }
+    .lpTitle { color: #aaa; text-align: center; font: 600 14px system-ui, sans-serif; padding: 4px; }
+    .lpSheet a, .lpSheet button {
+        display: block; box-sizing: border-box; width: 100%;
+        padding: 14px; border: 0; border-radius: 12px;
+        background: #2a2a2a; color: #fff; text-align: center;
+        font: 500 17px system-ui, sans-serif; text-decoration: none; cursor: pointer;
+    }
+    .lpSheet button.lpCancel { background: #1a1a1a; color: #ccc; }
+`;
+document.head.appendChild(menuStyle);
+
+function attachLongPress(card, app) {
+    card.classList.add("hasAlt");
+
+    let timer = null;
+    let startX = 0, startY = 0;
+    let longPressed = false;
+
+    const cancel = () => { clearTimeout(timer); timer = null; };
+
+    card.addEventListener("pointerdown", e => {
+        longPressed = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        cancel();
+        timer = setTimeout(() => {
+            longPressed = true;
+            if (navigator.vibrate) navigator.vibrate(15);
+            showAppMenu(card, app);
+        }, LONG_PRESS_MS);
+    });
+
+    card.addEventListener("pointermove", e => {
+        if (timer && Math.hypot(e.clientX - startX, e.clientY - startY) > MOVE_TOLERANCE) cancel();
+    });
+
+    ["pointerup", "pointercancel", "pointerleave"].forEach(type =>
+        card.addEventListener(type, cancel)
+    );
+
+    // Block the browser's own link menu, and the normal tap that follows a long press
+    card.addEventListener("contextmenu", e => e.preventDefault());
+    card.addEventListener("click", e => {
+        if (longPressed) {
+            e.preventDefault();
+            longPressed = false;
+        }
+    });
+}
+
+function showAppMenu(card, app) {
+    const title = card.querySelector("h2").textContent;
+    const options = Array.isArray(app.alt) ? app.alt : [app.alt];
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "lpBackdrop";
+
+    const sheet = document.createElement("div");
+    sheet.className = "lpSheet";
+
+    const heading = document.createElement("div");
+    heading.className = "lpTitle";
+    heading.textContent = title;
+    sheet.appendChild(heading);
+
+    const addLink = (label, url) => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.textContent = label;
+        sheet.appendChild(a);
+    };
+
+    addLink("Open " + title, app.url);
+    options.forEach(opt => addLink(opt.label, opt.url));
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "lpCancel";
+    cancelBtn.textContent = "Cancel";
+    sheet.appendChild(cancelBtn);
+
+    backdrop.appendChild(sheet);
+    document.body.appendChild(backdrop);
+
+    const close = () => backdrop.remove();
+    cancelBtn.addEventListener("click", close);
+    // Tap outside the sheet to dismiss (ignore the finger-lift from the long press itself)
+    backdrop.addEventListener("click", e => { if (e.target === backdrop) close(); });
+}
 
 
 const refreshTrigger = document.getElementById("refreshTrigger");
