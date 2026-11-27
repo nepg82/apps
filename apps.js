@@ -5,10 +5,6 @@ const apps = [
         access: "key"
     },
     {
-        url: "https://nepg82.github.io/biker-church/admin.html",
-        access: "key"
-    },
-    {
         url: "https://nepg82.github.io/FitMac/",
         access: "key"
     },
